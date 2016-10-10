@@ -27,6 +27,19 @@ class TestStock(object):
         stock = StockFactory(symbol='abc', stock_type=Stock.TYPE_COMMON)
         assert unicode(stock) == 'ABC - Common'
 
+    def test_common_divident_yield(self):
+        stock = StockFactory(stock_type=Stock.TYPE_COMMON, last_divident=Decimal(12))
+        assert stock.divident_yield(10) == Decimal('1.2')
+
+    def test_preferred_divident_yield(self):
+        stock = StockFactory(stock_type=Stock.TYPE_PREFERRED,
+                             fixed_divident=Decimal(2), par_value=Decimal(150))
+        assert stock.divident_yield(10) == Decimal('0.3')
+
+    def test_zero_price_divident_yield(self):
+        stock = StockFactory()
+        assert stock.divident_yield(0) == 0
+
 
 class TestTrade(object):
 

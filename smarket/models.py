@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 
 
 class Stock(object):
@@ -6,6 +6,9 @@ class Stock(object):
 
     symbol -- normalized stock symbol, converted to uppercase
     stock_type -- one of Stock.TYPE_PREFERRED, Stock.TYPE_COMMON
+    par_value -- par value in pennies
+    last_divident -- last divident in pennies
+    fixed_divident -- fixed divident in %, as Decimal
 
     """
     TYPE_PREFERRED = 'p'
@@ -15,10 +18,14 @@ class Stock(object):
         ('c', 'Common'),
     )
 
-    def __init__(self, symbol, stock_type, last_divident, fixed_divident, par_value):
-        self.symbol = symbol.upper()
+    def __init__(self, symbol, stock_type, par_value, last_divident, fixed_divident=None):
         if stock_type not in (Stock.TYPE_PREFERRED, Stock.TYPE_COMMON):
             raise ValueError('stock_type must be one of (Stock.TYPE_PREFERRED, Stock.TYPE_COMMON)')
+
+        if stock_type == Stock.TYPE_PREFERRED and fixed_divident is None:
+            raise ValueError('Preferred stock requires fixed divident')
+
+        self.symbol = symbol.upper()
         self.stock_type = stock_type
         self.last_divident = last_divident
         self.fixed_divident = fixed_divident
@@ -36,6 +43,21 @@ class Stock(object):
             if k == self.stock_type:
                 return v
         raise ValueError('Invalid stock type "{}"'.format(self.stock_type))
+
+    def divident_yield(self, price):
+        """Returns divident yield
+
+        price -- price in pennies
+
+        """
+        if price == 0:
+            return 0
+
+        if self.stock_type == Stock.TYPE_COMMON:
+            return self.last_divident / price
+        else:
+            # fixed divident is in %, converting to fraction
+            return (self.fixed_divident * self.par_value / 100) / price
 
 
 class Trade(object):
