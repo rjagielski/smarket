@@ -1,2 +1,5 @@
 /local/
 *.swp
+*.pyc
+.cache
+
