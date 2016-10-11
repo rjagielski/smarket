@@ -59,6 +59,18 @@ class Stock(object):
             # fixed divident is in %, converting to fraction
             return (self.fixed_divident * self.par_value / 100) / price
 
+    def per(self, price):
+        """Returns P/E ratio (price/earnings ratio)
+
+        price -- price in pennies
+
+        """
+        divident = self.divident_yield(price)
+        if divident == 0:
+            return 0
+
+        return price / divident
+
 
 class Trade(object):
     """Records single trade

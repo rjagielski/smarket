@@ -40,6 +40,10 @@ class TestStock(object):
         stock = StockFactory()
         assert stock.divident_yield(0) == 0
 
+    def test_per(self):
+        stock = StockFactory(stock_type=Stock.TYPE_COMMON, last_divident=Decimal(10))
+        assert stock.per(Decimal(5)) == Decimal('2.5')
+
 
 class TestTrade(object):
 
