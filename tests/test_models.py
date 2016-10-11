@@ -85,3 +85,19 @@ class TestMarket(object):
         market = Market()
         market.stocks = {s.symbol: s for s in stocks}
         assert unicode(market) == 'Market with 2 stocks'
+
+    def test_all_share_index(self):
+        stock1 = StockFactory() # price == 5
+        stock1.add_trade(1, 2, 5)
+
+        stock2 = StockFactory()  # price == 2
+        stock2.add_trade(1, 1, 5)
+        stock2.add_trade(1, 2, 3)
+
+        stock3 = StockFactory()
+        stock3.add_trade(-1, 2, 2)  # price == 1
+
+        market = Market()
+        market.stocks = {s.symbol: s for s in [stock1, stock2, stock3]}
+
+        assert market.all_share_index() == 2

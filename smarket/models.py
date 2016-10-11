@@ -159,3 +159,16 @@ class Market(object):
         if stock.symbol in self.stocks:
             raise ValueError('Stock {} already exists'.format(stock.symbol))
         self.stocks[stock.symbol] = stock
+
+    def all_share_index(self):
+        """Returns all share index
+
+        It's a geometric mean of volume weight price of each stock
+
+        """
+        product = 1
+        for stock in self.stocks.values():
+            product *= stock.volume_weight_price()
+
+        expontent = 1.0 / len(self.stocks)
+        return product ** expontent
