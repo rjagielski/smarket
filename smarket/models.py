@@ -135,3 +135,27 @@ class Trade(object):
 
     def get_buy_display(self):
         return 'Buy' if self.buy == 1 else 'Sell'
+
+
+class Market(object):
+    """Track data of the entire market
+
+    Note: Use self.add_stock to safely add new stocks
+    Note: Keys are always upper()
+
+    """
+
+    def __init__(self):
+        self.stocks = {}
+
+    def __unicode__(self):
+        return 'Market with {} stocks'.format(len(self.stocks))
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def add_stock(self, *args, **kwargs):
+        stock = Stock(*args, **kwargs)
+        if stock.symbol in self.stocks:
+            raise ValueError('Stock {} already exists'.format(stock.symbol))
+        self.stocks[stock.symbol] = stock

@@ -1,7 +1,7 @@
 import datetime
 import pytest
 from decimal import Decimal
-from smarket.models import Stock
+from smarket.models import Stock, Market
 from tests.factories import StockFactory, TradeFactory
 
 
@@ -69,3 +69,19 @@ class TestTrade(object):
     def test_unicde(self):
         trade = TradeFactory(quantity=5, buy=1, price=Decimal('1.5'))
         assert unicode(trade) == 'Buy 5 for 1.5'
+
+
+class TestMarket(object):
+
+    def test_add_stock(self):
+        market = Market()
+        market.add_stock(symbol='abc', stock_type=Stock.TYPE_COMMON,
+                         par_value=1.1, last_divident=1)
+        assert len(market.stocks) == 1
+        assert 'ABC' in market.stocks
+
+    def test_unicode(self):
+        stocks = [StockFactory(symbol='abc'), StockFactory(symbol='xyz')]
+        market = Market()
+        market.stocks = {s.symbol: s for s in stocks}
+        assert unicode(market) == 'Market with 2 stocks'
