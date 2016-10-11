@@ -44,10 +44,16 @@ class TestStock(object):
         stock = StockFactory(stock_type=Stock.TYPE_COMMON, last_divident=Decimal(10))
         assert stock.per(Decimal(5)) == Decimal('2.5')
 
+    def test_record_trace(self):
+        stock = StockFactory()
+        stock.add_trade(5, True, 10)
+        stock.add_trade(1, False, 1)
+        assert len(stock.trades) == 2
+        assert stock.trades[1].timestamp > stock.trades[0].timestamp
+
 
 class TestTrade(object):
 
     def test_unicde(self):
-        stock = StockFactory(symbol='abc')
-        trade = TradeFactory(stock=stock, quantity=5, buy=True, price=Decimal('1.5'))
-        assert unicode(trade) == 'Buy 5 ABC for 1.5'
+        trade = TradeFactory(quantity=5, buy=True, price=Decimal('1.5'))
+        assert unicode(trade) == 'Buy 5 for 1.5'

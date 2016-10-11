@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 import factory
 from smarket.models import Stock, Trade
@@ -18,7 +19,7 @@ class TradeFactory(factory.Factory):
     class Meta:
         model = Trade
 
-    stock = factory.SubFactory(StockFactory)
     quantity = 5
     buy = True
     price = Decimal('1.5')
+    timestamp = datetime.datetime.now()

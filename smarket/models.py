@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, division
+import datetime
 
 
 class Stock(object):
@@ -30,6 +31,7 @@ class Stock(object):
         self.last_divident = last_divident
         self.fixed_divident = fixed_divident
         self.par_value = par_value
+        self.trades = []
 
     def __unicode__(self):
         return '{symbol} - {stock_type}'.format(symbol=self.symbol,
@@ -71,6 +73,20 @@ class Stock(object):
 
         return price / divident
 
+    def add_trade(self, quantity, buy, price, timestamp=None):
+        """Helper to add trade with timestamp defaulting to now()
+
+        quantity -- quantity of shares
+        buy -- True if buy, False if sell
+        price -- traded price
+        timestamp -- override timestamp (default: now())
+
+        """
+        if timestamp is None:
+            timestamp = datetime.datetime.now()
+        self.trades.append(Trade(quantity=quantity, buy=buy, price=price,
+                                 timestamp=timestamp))
+
 
 class Trade(object):
     """Records single trade
@@ -80,17 +96,16 @@ class Trade(object):
     price -- traded price
 
     """
-    def __init__(self, stock, quantity, buy, price):
-        self.stock = stock
+    def __init__(self, quantity, buy, price, timestamp):
         self.quantity = quantity
         self.buy = buy
         self.price = price
+        self.timestamp = timestamp
 
     def __unicode__(self):
-        template = '{buy} {quantity} {stock_symbol} for {price}'
+        template = '{buy} {quantity} for {price}'
         return template.format(buy=self.get_buy_display(),
                                quantity=self.quantity,
-                               stock_symbol=self.stock.symbol,
                                price=self.price)
 
     def __str__(self):
