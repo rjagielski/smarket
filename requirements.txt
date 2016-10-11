@@ -1,3 +1,8 @@
 ## The following requirements were added by pip freeze:
+factory-boy==2.7.0
+fake-factory==0.7.2
+ipaddress==1.0.17
 py==1.4.31
 pytest==3.0.3
+python-dateutil==2.5.3
+six==1.10.0

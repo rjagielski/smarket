@@ -7,6 +7,7 @@ help:
 	@echo "        Run pytest"
 
 init:
+	pip install --upgrade pip
 	pip install -r requirements.txt
 
 freeze:
