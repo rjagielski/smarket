@@ -1,3 +1,4 @@
+import datetime
 import pytest
 from decimal import Decimal
 from smarket.models import Stock
@@ -46,14 +47,25 @@ class TestStock(object):
 
     def test_record_trace(self):
         stock = StockFactory()
-        stock.add_trade(5, True, 10)
-        stock.add_trade(1, False, 1)
+        stock.add_trade(1, 5, 10)
+        stock.add_trade(-1, 1, 1)
         assert len(stock.trades) == 2
         assert stock.trades[1].timestamp > stock.trades[0].timestamp
+
+    def test_volume_weight_price(self):
+        stock = StockFactory()
+        stock.add_trade(1, 1000, 1)  # this will be ignored because trade is too old
+        stock.trades[0].timestamp -= datetime.timedelta(minutes=16)
+
+        stock.add_trade(1, 2, 5)
+        stock.add_trade(-1, 4, 2)
+        stock.add_trade(1, 4, 2)
+        # (2 * 5 +  4 * 2 + 4 * 2) / 10 == (10 + 8 + 8) / 10 == 2.6
+        assert stock.volume_weight_price() == 2.6
 
 
 class TestTrade(object):
 
     def test_unicde(self):
-        trade = TradeFactory(quantity=5, buy=True, price=Decimal('1.5'))
+        trade = TradeFactory(quantity=5, buy=1, price=Decimal('1.5'))
         assert unicode(trade) == 'Buy 5 for 1.5'

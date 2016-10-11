@@ -20,6 +20,6 @@ class TradeFactory(factory.Factory):
         model = Trade
 
     quantity = 5
-    buy = True
+    buy = 1
     price = Decimal('1.5')
     timestamp = datetime.datetime.now()

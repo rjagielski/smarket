@@ -31,7 +31,7 @@ class Stock(object):
         self.last_divident = last_divident
         self.fixed_divident = fixed_divident
         self.par_value = par_value
-        self.trades = []
+        self.trades = []  # trades ordered by timestamp
 
     def __unicode__(self):
         return '{symbol} - {stock_type}'.format(symbol=self.symbol,
@@ -73,30 +73,52 @@ class Stock(object):
 
         return price / divident
 
-    def add_trade(self, quantity, buy, price, timestamp=None):
+    def add_trade(self, buy, quantity, price):
         """Helper to add trade with timestamp defaulting to now()
 
         quantity -- quantity of shares
         buy -- True if buy, False if sell
         price -- traded price
-        timestamp -- override timestamp (default: now())
 
         """
-        if timestamp is None:
-            timestamp = datetime.datetime.now()
         self.trades.append(Trade(quantity=quantity, buy=buy, price=price,
-                                 timestamp=timestamp))
+                                 timestamp=datetime.datetime.now()))
+
+    def _recent_trades(self):
+        """Yields trades made in last 15 minutes"""
+        time_boundry = datetime.datetime.now() - datetime.timedelta(minutes=15)
+        for trade in reversed(self.trades):
+            if trade.timestamp > time_boundry:
+                yield trade
+            else:
+                raise StopIteration()
+
+    def volume_weight_price(self):
+        """Returns Volume Weighted Stock Price based on trades in past 15 minutes"""
+        traded_value = 0
+        traded_quantity = 0
+        for trade in self._recent_trades():
+            traded_value += trade.price * trade.quantity
+            traded_quantity += trade.quantity
+
+        if traded_quantity == 0:
+            return 0
+        return float(traded_value) / traded_quantity
 
 
 class Trade(object):
     """Records single trade
 
     quantity -- quantity of shares
-    buy -- True if buy, False if sell
+    buy -- 1 for buy, -1 for sell
     price -- traded price
 
     """
     def __init__(self, quantity, buy, price, timestamp):
+        if buy not in (-1, 1):
+            raise ValueError('Buy must be 1 (buy) or -1 (sell)')
+        if quantity < 0:
+            raise ValueError('Quantity must be positive')
         self.quantity = quantity
         self.buy = buy
         self.price = price
@@ -112,4 +134,4 @@ class Trade(object):
         return unicode(self).encode('utf-8')
 
     def get_buy_display(self):
-        return 'Buy' if self.buy else 'Sell'
+        return 'Buy' if self.buy == 1 else 'Sell'
