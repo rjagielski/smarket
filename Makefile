@@ -13,5 +13,8 @@ init:
 freeze:
 	pip freeze -r requirements.txt > requirements.txt
 
+run:
+	python run.py
+
 test:
 	pytest
