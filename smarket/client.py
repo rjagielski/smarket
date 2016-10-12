@@ -4,6 +4,7 @@ This is a simple client that can be used to test Super Simple Stock Market in
 practice. It has only the basic features that author wanted to show for the app demo.
 
 """
+from __future__ import unicode_literals
 from decimal import Decimal
 import sys
 from smarket.models import Market
@@ -43,7 +44,7 @@ class SMarketClient(object):
 
     def run_cli(self, stock=None):
         try:
-            command = raw_input("Type `help` for instructions:\n")
+            command = raw_input("Type `help` for instructions:\n").decode(sys.stdin.encoding)
         except EOFError:
             self.exit()
 
