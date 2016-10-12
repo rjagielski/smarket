@@ -3,6 +3,8 @@ help:
 	@echo "        install dependencies with pip"
 	@echo "    freeze"
 	@echo "        pip freeze and save, keep requirements order"
+	@echo "    run"
+	@echo "        Run CLI client"
 	@echo "    test"
 	@echo "        Run pytest"
 
