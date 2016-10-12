@@ -15,3 +15,6 @@ Create virtualenv and run `make init`
 ## Running tests
 
 `make test` or `pytest`
+
+## Running basic CLI client
+`make run`
